@@ -27,7 +27,7 @@ Criar uma API para controle de saldo de pessoas identificadas pelo CPF.
 ## Como executar
 - Instale o [composer](https://getcomposer.org/download/) em sua máquina
 - Clone o projeto em uma pasta a seu critério
-- Importe o banco de dados através do script presente no arquivo \db\client_database.sql
+- Importe o banco de dados através do script presente no arquivo \db\controle-financeiro.sql
 - Abrir o terminal na pasta do projeto e rodar o comando `composer install`
 - Executar a instrução "Configuração da conexão com o banco de dados" logo abaixo
 - Executar o comando `php -S localhost:8080 -t public public/index.php`
