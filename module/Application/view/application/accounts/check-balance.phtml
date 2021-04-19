@@ -1,0 +1,15 @@
+<script>
+    $(document).ready(function(){
+        var name = '<?=$person['name'] ?? ''?>';
+        var balance = '<?=number_format($balance, 2, ",", ".") ?? ''?>';
+
+        Swal.fire({
+            icon: 'info',
+            title: 'Saldo em conta',
+            text: 'O saldo atual de ' + name + ' é de R$ ' + balance
+        }).then(function(){
+            window.location = "/";
+        })
+        
+    })
+</script>

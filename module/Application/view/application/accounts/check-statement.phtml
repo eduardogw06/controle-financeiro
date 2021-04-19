@@ -1,0 +1,41 @@
+<div class="row">
+    <h1>Extrato da Conta </h1>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+        <th scope="col">CPF Emitente</th>
+        <th scope="col">Emitente</th>
+        <th scope="col">CPF Destinatário</th>
+        <th scope="col">Destinatário</th>
+        <th scope="col">Operação</th>
+        <th scope="col">Valor</th>
+        <th scope="col">Data</th>
+        </tr>
+    </thead>
+    <?php if(empty($data)) : ?>
+        <tbody>
+            <tr>
+                <td colspan="6" style="text-align: center;">Nenhuma transação enconntrada.</td>
+            </tr>
+        </tbody>
+    <?php else : ?>
+        <tbody>
+            <?php  foreach ($data as $transaction_movement): ?>
+
+                <tr>
+                    <td><?= $transaction_movement['from_cpf']; ?></td>
+                    <td><?= $transaction_movement['from_name']; ?></td>
+                    <td><?= $transaction_movement['to_cpf']; ?></td>
+                    <td><?= $transaction_movement['to_name']; ?></td>
+                    <td><?= $transaction_movement['type']; ?></td>
+                    <td style="color: <?= ($transaction_movement['type_id'] == 2) ? 'green' : 'red' ?>">
+                        <?= "R$ " . number_format($transaction_movement['value'], 2, ",", ".");?>
+                    </td>
+                    <td><?= date("d/m/Y H:i:s", strtotime($transaction_movement['date'])); ?>
+                </tr>
+            <?php  endforeach; ?>
+        </tbody>
+    <?php endif;?>   
+</table>

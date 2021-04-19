@@ -1,0 +1,94 @@
+<h1>Cadastro de Pessoas</h1>
+<br>
+<form method="POST" id="addForm">
+    <div class="row">
+        <div class="col-md-6">
+            <label for="name" class="col-sm-2 col-form-label">Nome</label>
+            <input type="text" maxlength="100" class="form-control required" id="name" name="name" placeholder="Informe o nome da pessoa">
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="cpf" class="col-sm-2 col-form-label">CPF</label>
+            <input type="text" maxlength="11" class="form-control required" id="cpf" name="cpf" placeholder="Informe o CPF">
+        </div>
+    </div>
+    <br>
+    
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <button type="button" class="btn btn-primary" id="saveButton">Cadastrar</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function(){
+        $("#cpf").mask('999.999.999-99');
+    })
+
+    
+   
+
+    $("#saveButton").click(function(){
+        var name = $("#name").val();
+        var cpf = $("#cpf").val().replaceAll('.', '').replaceAll('-', '');
+
+        if(name.length !== 0 && cpf.length !== 0){
+            validateRequiredFields();
+
+            $.ajax({
+                type: "post",
+                url: "save",
+                data: {
+                    name : name,
+                    cpf : cpf,
+                },
+                dataType: "json",
+            }).done(function (response) {
+                if(response.response){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Aeee',
+                        text: response.message,
+                    }).then(function(){
+                        window.location = "/";
+                    })
+                }else{
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Ihhh',
+                        text: response.message
+                    });
+                }
+            }).fail(function (jqXHR, textStatus) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ahhh :(',
+                    text: 'Ocorreu um erro no servidor, tente novamente mais tarde.',
+                })
+            });
+        }else{
+            validateRequiredFields();
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Opaa',
+                text: 'Preencha os campos obrigatórios.'
+            })
+        }
+    });
+
+    function validateRequiredFields(){
+        $("#addForm").find('.required').each(function() {
+            if($(this).val() == ""){
+                $(this).addClass("is-invalid");
+            }else{
+                $(this).removeClass("is-invalid");
+            }
+        });
+    }
+
+</script>

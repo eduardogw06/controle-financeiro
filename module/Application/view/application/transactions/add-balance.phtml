@@ -1,0 +1,115 @@
+
+<div class="row">
+    <h1>Creditar Saldo</h1>
+</div>
+
+<br>
+<div class="alert alert-success" role="alert">
+    O saldo atual de <?=$person['name']?> é de R$ <?= number_format($balance, 2, ",", ".")?>
+</div>
+<form method="POST" id="addForm">
+    <input type="hidden" id="id" value="<?=$person['id']?>">
+    <div class="row">
+        <div class="col-md-6">
+            <label for="name" class="col-sm-2 col-form-label">Nome</label>
+            <input type="text" maxlength="100" class="form-control required" id="name" name="name" 
+                placeholder="Informe o nome da pessoa" value="<?=$person['name']?>" disabled>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="cpf" class="col-sm-2 col-form-label">CPF</label>
+            <input type="text" maxlength="11" class="form-control required" id="cpf" name="cpf" 
+                placeholder="Informe o CPF" value="<?=$person['cpf']?>" disabled>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <label for="cpf" class="col-sm-2 col-form-label">Valor</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">R$</span>
+                </div>
+                <input type="text" class="form-control" id="value" name="value" placeholder="0,00">
+            </div>
+            
+        </div>
+    </div>
+    <br>
+    
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <button type="button" class="btn btn-primary" id="saveButton">Creditar</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function(){
+        $("#cpf").mask('999.999.999-99');
+        $("#value").mask('000.000.000.000.000,00', {reverse: true});
+    })
+
+    $("#saveButton").click(function(){
+        var person = $("#id").val();
+        var value = $("#value").val().replaceAll('.', '').replaceAll(',', '.');
+
+        if(person.length !== 0 && value.length !== 0){
+            validateRequiredFields();
+
+            $.ajax({
+                type: "post",
+                url: "/transactions/credit",
+                data: {
+                    to : person,
+                    value : value
+                },
+                dataType: "json",
+            }).done(function (response) {
+                if(response.response){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Aeee',
+                        text: response.message,
+                    }).then(function(){
+                        window.location = "/";
+                    })
+                }else{
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Ihhh',
+                        text: response.message
+                    });
+                }
+            }).fail(function (jqXHR, textStatus) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ahhh :(',
+                    text: 'Ocorreu um erro no servidor, tente novamente mais tarde.',
+                })
+            });
+        }else{
+            validateRequiredFields();
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Opaa',
+                text: 'Preencha os campos obrigatórios.'
+            })
+        }
+    });
+
+    function validateRequiredFields(){
+        $("#addForm").find('.required').each(function() {
+            if($(this).val() == ""){
+                $(this).addClass("is-invalid");
+            }else{
+                $(this).removeClass("is-invalid");
+            }
+        });
+    }
+
+</script>

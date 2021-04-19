@@ -1,0 +1,83 @@
+<h1>Cadastro de Pessoas</h1>
+<br>
+
+<a href="/application/add" class="btn btn-success"> + </a>
+
+
+<table class="table">
+    <thead>
+        <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Nome</th>
+        <th scope="col">CPF</th>
+        <th scope="col">Ações</th>
+        </tr>
+    </thead>
+    <?php if(empty($people)) : ?>
+        <tbody>
+            <tr>
+                <td colspan="10" style="text-align: center;">Nenhum registro encontrado. Para cadastrar algum cliente clique <a href="application/add">aqui</a></td>
+            </tr>
+        </tbody>
+    <?php else : ?>
+        <tbody>
+            <?php  foreach ($people as $person): ?>
+                <tr>
+                    <th scope="row"><?=$person['id'];?></th>
+                    <td><?=$person['name'];?></td>
+                    <td><?=$person['cpf'];?></td>
+                    <td colspan="5">
+                        <a href="/transactions/add-balance/<?=$person['id'];?>" title="Creditar" class="btn btn-primary" >Creditar</a>
+                        <a href="/transactions/debit-balance/<?=$person['id'];?>" title="Debitar" class="btn btn-primary" >Debitar</a>
+                        <a href="/transactions/transfer-balance/<?=$person['id'];?>" title="Transferir" class="btn btn-primary" >Transferir</a>
+                        <a href="/accounts/check-balance/<?=$person['id'];?>" title="Consultar Saldo" class="btn btn-primary" >Consultar Saldo</a>
+                        <a href="/accounts/check-statement/<?=$person['id'];?>" title="Consultar Extrato" class="btn btn-primary" >Consultar Extrato</a>
+                    </td>
+                </tr>
+            <?php  endforeach; ?>
+        </tbody>
+    <?php endif;?>   
+</table>
+
+
+
+
+<script>
+    function deleteClient(clientId){ 
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: "Você não poderá desfazer essa exclusão",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, deletar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "post",
+                    url: "application/delete-client",
+                    data: {
+                        id : clientId
+                    },
+                    dataType: "json",
+                }).done(function (response) {
+                    if(response.response){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Aeee',
+                            text: response.message,
+                        }).then(function(){
+                            window.location = "/";
+                        });
+                    }
+                }).fail(function (jqXHR, textStatus) {
+                    
+                });
+            }
+        })     
+    }
+
+
+</script>

@@ -1,0 +1,129 @@
+<div class="alert alert-success" role="alert">
+    O saldo atual de <?=$person['name']?> é de R$ <?= number_format($balance, 2, ",", ".")?>
+</div>
+<form method="POST" id="addForm">
+    <input type="hidden" id="from" value="<?=$person['id']?>">
+    <input type="hidden" id="balance" value="<?=$balance;?>">
+    <div class="row">
+        <div class="col-md-6">
+            <label for="name" class="col-sm-2 col-form-label">Nome</label>
+            <input type="text" maxlength="100" class="form-control required" id="name" name="name" 
+                placeholder="Informe o nome da pessoa" value="<?=$person['name']?>" disabled>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="cpf" class="col-sm-2 col-form-label">CPF</label>
+            <input type="text" maxlength="11" class="form-control required" id="cpf" name="cpf" 
+                placeholder="Informe o CPF" value="<?=$person['cpf']?>" disabled>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <label for="gender" class="col-sm-9 col-form-label">Transferir para</label>
+            <select class="form-select required" id="to" id="to">
+                <option value="" selected>Escolha uma opção</option>
+                <?php
+                    foreach($people as $personData){
+                        if($personData['id'] <> $person['id']){
+                            echo "<option value='" . $personData['id']. "'>" 
+                            . $personData['cpf'] . ' - '. $personData['name'] . "</option>";
+                        }
+                    }
+                ?>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <label for="cpf" class="col-sm-2 col-form-label">Valor</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">R$</span>
+                </div>
+                <input type="text" class="form-control required numeric" id="value" name="value" placeholder="0,00">
+            </div>
+            
+        </div>
+    </div>
+    <br>
+    
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <button type="button" class="btn btn-primary" id="saveButton">Transferir</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function(){
+        $("#cpf").mask('999.999.999-99');
+        $("#value").mask('000.000.000.000.000,00', {reverse: true});
+    })
+
+    $("#saveButton").click(function(){
+        var from = $("#from").val();
+        var to = $("#to").val();
+        var value = $("#value").val().replaceAll('.', '').replaceAll(',', '.');
+
+        if(from > 0 && to > 0  && value > 0){
+            validateRequiredFields();
+
+            $.ajax({
+                type: "post",
+                url: "/transactions/transfer",
+                data: {
+                    from : from,
+                    to : to,
+                    value : value
+                },
+                dataType: "json",
+            }).done(function (response) {
+                if(response.response){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Aeee',
+                        text: response.message,
+                    }).then(function(){
+                        window.location = "/";
+                    })
+                }else{
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Ihhh',
+                        text: response.message
+                    });
+                }
+            }).fail(function (jqXHR, textStatus) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ahhh :(',
+                    text: 'Ocorreu um erro no servidor, tente novamente mais tarde.',
+                })
+            });
+        }else{
+            validateRequiredFields();
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Opaa',
+                text: 'Preencha os campos obrigatórios.'
+            })
+        }
+    });
+
+    function validateRequiredFields(){
+        $("#addForm").find('.required').each(function() {
+            if($(this).val() == "" || ($(this).hasClass('numeric') && $(this).val() <= 0)){
+                $(this).addClass("is-invalid");
+            }else{
+                $(this).removeClass("is-invalid");
+            }
+        });
+    }
+
+</script>
