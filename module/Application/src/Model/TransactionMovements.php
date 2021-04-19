@@ -108,12 +108,6 @@ class TransactionMovements{
             'value' => $transfer['value']
         ];
 
-        // $creditTransaction = [
-        //     'from' => $transfer['to'],
-        //     'to' => $transfer['from'],
-        //     'value' => $transfer['value']
-        // ];
-
         $debit = new Transaction($this->db, $transaction);
         $credit = new Transaction($this->db, $transaction);
         
