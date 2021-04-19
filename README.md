@@ -42,7 +42,7 @@ return [
         'adapters' => [
             'db1' => [
                 'driver' => 'Pdo_Mysql',
-                'dsn' => "mysql:host=127.0.0.1;dbname=client_database",
+                'dsn' => "mysql:host=127.0.0.1;dbname=controle-financeiro",
                 'username' => '[USUARIO_DO_BANCO]',
                 'password' => '[SENHA_DO_BANCO]',
                 'driver_options' => [
